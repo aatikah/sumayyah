@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'jenkins-node'  // Replace with the label of your slave node
+        label 'jenkins-node-2'  // Replace with the label of your slave node
     }
   stages{
     
