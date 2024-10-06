@@ -1,8 +1,8 @@
 pipeline {
-    //agent {
-   //     label 'jenkins-slave'  // Replace with the label of your slave node
-   // }
-    agent any
+    agent {
+        label 'jenkins-slave'  // Replace with the label of your slave node
+    }
+
   stages{
     
     stage('Testing Node') {
