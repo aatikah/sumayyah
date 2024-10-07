@@ -23,9 +23,13 @@ pipeline {
                         docker run --rm \
                             -v $(pwd):/path \
                             ghcr.io/gitleaks/gitleaks:latest detect \
-                            --source /path \
-                            --report-format json \
-                            --report-path /path/gitleaks-report.json
+                            --source=/path \
+                            --report-format=json \
+                            --report-path=/path/gitleaks-report.json \
+                            --verbose \
+                            --no-git \
+                            --max-target-megabytes=0 \
+                            --additional-locations=/path
                     '''
                     
                     // Archive the reports as artifacts
