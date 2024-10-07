@@ -28,8 +28,7 @@ pipeline {
                             --report-path=/path/gitleaks-report.json \
                             --verbose \
                             --no-git \
-                            --max-target-megabytes=0 \
-                            --additional-locations=/path
+                            --max-target-megabytes=0 
                     '''
                     
                     // Archive the reports as artifacts
