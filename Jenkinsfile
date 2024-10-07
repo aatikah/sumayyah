@@ -37,21 +37,21 @@ pipeline {
                     sh 'wget "https://raw.githubusercontent.com/aatikah/sumayyah/refs/heads/master/owasp-dependency-check.sh"'
                     sh 'bash owasp-dependency-check.sh'
                     // Archive the reports as artifacts
-                        archiveArtifacts artifacts: 'report/dependency-check-report.json,report/dependency-check-report.html,report/dependency-check-report.xml', allowEmptyArchive: true
+                        archiveArtifacts artifacts: 'dependency-check-report.json,dependency-check-report.html,dependency-check-report.xml', allowEmptyArchive: true
 
             // Publish HTML report
                     publishHTML(target: [
                         allowMissing: false,
                         alwaysLinkToLastBuild: false,
                         keepAll: true,
-                        reportDir: './report',
+                        reportDir: '.',
                         reportFiles: 'dependency-check-report.html',
                         reportName: 'OWASP Dependency Checker Report'
                     ])
 
                     // Parse JSON report to check for issues
            // This if block can be added in another script block outside this script block to fail pipeline if cvssv is above 7
-                if (fileExists('report/dependency-check-report.json')) {
+                if (fileExists('dependency-check-report.json')) {
                     def jsonReport = readJSON file: 'report/dependency-check-report.json'
                     def vulnerabilities = jsonReport.dependencies.collect { it.vulnerabilities ?: [] }.flatten()
                     def highVulnerabilities = vulnerabilities.findAll { it.cvssv3?.baseScore >= 7 }
