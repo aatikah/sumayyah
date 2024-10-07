@@ -1,6 +1,9 @@
 [[rules]]
-id = "exclude-jquery-file"
-description = "Exclude specific jQuery file from scanning"
-path = "taskManager/static/taskManager/js/jquery-ui-1.9.2.custom.min.js"
-regex = '''.*'''  # You can use a simple regex to match anything or leave it out
-ignore = true
+description = "Generic API Key"
+regex = '''(?i)(api[_-]?key|api[_-]?secret|access[_-]?key|access[_-]?secret|secret[_-]?key)(['"=:\\s]{0,5})[a-zA-Z0-9]{32,}'''
+tags = ["key", "API", "generic"]
+
+[[rules]]
+description = "Generic Secret"
+regex = '''(?i)(secret|password|credentials)(['"=:\\s]{0,5})[a-zA-Z0-9!@#$%^&*()_+\\-=\\[\\]{};:'",.<>?]{8,}'''
+tags = ["secret", "generic"]
