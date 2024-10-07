@@ -16,8 +16,11 @@ pipeline {
             steps {
                 script {
                     // Pull and run the Gitleaks Docker image with a custom config file
+                    //sh '''
+                      //  docker run --rm -v $(pwd):/path -v $(pwd)/.gitleaks.toml:/.gitleaks.toml zricethezav/gitleaks:latest detect --source /path --config /.gitleaks.toml --report-format json --report-path /path/gitleaks-report.json || true
+                      //  '''
                     sh '''
-                        docker run --rm -v $(pwd):/path -v $(pwd)/.gitleaks.toml:/.gitleaks.toml zricethezav/gitleaks:latest detect --source /path --config /.gitleaks.toml --report-format json --report-path /path/gitleaks-report.json || true
+                        docker run --rm -v /home/jenkins/workspace/django:/path ghcr.io/gitleaks/gitleaks:latest detect --source /path --report-format json --report-path /path/gitleaks-report.json
                         '''
                     
                     // Archive the reports as artifacts
