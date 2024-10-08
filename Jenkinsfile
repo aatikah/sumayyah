@@ -112,7 +112,7 @@ stage('Build and Push Docker Image') {
             def dockerImage = 'aatikah/django-app'
             
             sshagent(['JENKINS_SLAVE_PRIVATE_KEY']) {
-                // Stop and remove the old container if it exists
+                // Stop and remove the old container if it existS
                 sh """
                     ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
                         container_id=\$(docker ps -q --filter ancestor=${dockerImage})
