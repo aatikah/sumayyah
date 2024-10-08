@@ -108,7 +108,7 @@ stage('Build and Push Docker Image') {
       stage('Deploy to GCP VM') {
     steps {
         script {
-            def remoteUser = 'jenkins-slave'
+            def remoteUser = 'jenkins'
             def dockerImage = 'aatikah/django-app'
             
             sshagent(['JENKINS_SLAVE_PRIVATE_KEY']) {
