@@ -2,6 +2,15 @@ pipeline {
     agent {
         label 'jenkins-slave'  // Replace with the label of your slave node
     }
+ environment{
+        DOCKER_REGISTRY = 'https://index.docker.io/v1/'
+        DOCKER_IMAGE = 'aatikah/task-app'
+        remoteHost = '34.133.55.7'
+        //DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
+        //DEFECTDOJO_URL = 'http://34.42.127.145:8080'
+       // PRODUCT_NAME = 'django-project'
+    }
+    
   stages{
       
     stage('Testing Node') {
@@ -65,48 +74,36 @@ pipeline {
 
       //BANDIT STAGE
 
-    stage('SAST With Bandit Security Scan') {
-    steps {
-        script {
-           
-            // Run Bandit scan and generate reports
-            sh '''
-                python3 -m venv bandit_venv
-                . bandit_venv/bin/activate
-                pip install --upgrade pip
-                pip install bandit
-                
-            
-                bandit -r . -f json -o bandit-report.json --exit-zero
-                bandit -r . -f html -o bandit-report.html --exit-zero
+    
+stage('Build and Push Docker Image') {
 
-                deactivate
-            '''
-            // Archive the reports as artifacts
-            archiveArtifacts artifacts: 'bandit-report.json,bandit-report.html', allowEmptyArchive: true
+            steps {
+                script {
+                    // Wrap the Docker commands with withCredentials to securely access the Docker credentials
+                    withCredentials([usernamePassword(credentialsId: 'DOCKER_LOGIN', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Build the Docker image
+                        sh "docker build -t ${DOCKER_IMAGE} ."
 
-            // Publish HTML report
-            publishHTML(target: [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: '.',
-                reportFiles: 'bandit-report.html',
-                reportName: 'Bandit Security Scan Report'
-            ])
-            
-            // Parse JSON report to check for issues
-            script {
-                def jsonReport = readJSON file: 'bandit-report.json'
-                def issueCount = jsonReport.results.size()
-                if (issueCount > 0) {
-                    echo "Bandit found ${issueCount} potential security issue(s). Please review the report."
-                } else {
-                    echo "Bandit scan completed successfully with no issues found."
+
+                        // Log in to the Docker registry using a more secure method. set +x set -x This turns off command echoing temporarily
+                        sh '''
+                            set +x
+                            echo "$DOCKER_PASSWORD" | docker login $DOCKER_REGISTRY -u "$DOCKER_USERNAME" --password-stdin
+                            set -x
+                        '''
+                       
+                        // Push the Docker image
+                        sh "docker push ${DOCKER_IMAGE}"
+                        
+                        // Log out from the Docker registry
+                        sh "docker logout $DOCKER_REGISTRY"
+
+                        // Clean up: remove any leftover Docker credentials
+                        sh "rm -f /home/jenkins/.docker/config.json"
+                    }
                 }
             }
         }
-    }
-}
+      
   }
 }
