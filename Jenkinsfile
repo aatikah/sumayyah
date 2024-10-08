@@ -111,7 +111,7 @@ stage('Build and Push Docker Image') {
             def remoteUser = 'jenkins-slave'
             def dockerImage = 'aatikah/django-app'
             
-            sshagent(['JENKINS_MASTER_PRIVATE_KEY']) {
+            sshagent(['JENKINS_MASTER_KEY_2']) {
                 // Stop and remove the old container if it existS
                 sh """
                     ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
