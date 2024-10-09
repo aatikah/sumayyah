@@ -154,7 +154,7 @@ stage('Build and Push Docker Image') {
                 
                 // Verify the deployment
                 sh """
-                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHostInternal} '
                         if docker ps | grep -q ${dockerImage}; then
                             echo "Deployment successful"
                         else
