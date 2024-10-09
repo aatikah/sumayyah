@@ -168,13 +168,12 @@ stage('Build and Push Docker Image') {
                 -quickurl http://${remoteHost} \
                 -quickprogress \
                 -quickout ${WORKSPACE}/${reportNameXml}
-                """
 
-	     ${zapHome}/zap.sh -cmd \
+  	     ${zapHome}/zap.sh -cmd \
 		-quickurl http://${remoteHost} \
 		-quickprogress \
 		-quickout ${WORKSPACE}/${reportNameJson}
-		"""
+                """
           
             // Archive the ZAP reports
             archiveArtifacts artifacts: "${reportNameHtml},${reportNameXml}, ${reportNameJson}", fingerprint: true
