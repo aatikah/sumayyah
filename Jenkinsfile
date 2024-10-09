@@ -6,6 +6,7 @@ pipeline {
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
         DOCKER_IMAGE = 'aatikah/task-app'
         remoteHost = '34.133.55.7'
+	remoteHostInternal = '10.0.1.14'
         //DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
         //DEFECTDOJO_URL = 'http://34.42.127.145:8080'
        // PRODUCT_NAME = 'django-project'
@@ -117,7 +118,7 @@ stage('Build and Push Docker Image') {
 							echo "SSH key contents:"
 							cat \$SSH_KEY
 							echo "Attempting SSH connection with verbose output:"
-							ssh -v -i \$SSH_KEY ${remoteUser}@${remoteHost} 'echo "SSH connection successful"'
+							ssh -v -i \$SSH_KEY ${remoteUser}@${remoteHostInternal} 'echo "SSH connection successful"'
 						"""
 					}
 				}
@@ -134,7 +135,7 @@ stage('Build and Push Docker Image') {
             sshagent(['JENKINS_MASTER_KEY_2']) {
                 // Stop and remove the old container if it existS
                 sh """
-                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHostInternal} '
                         container_id=\$(docker ps -q --filter ancestor=${dockerImage})
                         if [ ! -z "\$container_id" ]; then
                             docker stop \$container_id
