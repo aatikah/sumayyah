@@ -204,11 +204,11 @@ stage('Build and Push Docker Image') {
             def zapJson = readJSON file: reportNameJson
             
             // Example: Check for high alerts in JSON
-            def highAlerts = zapJson.site[0].alerts.findAll { it.riskcode >= 3 }
+            def urgentAlerts = zapJson.site[0].alerts.findAll { it.riskcode >= 3 }
             
-            if (highAlerts.size() > 0) {
-                echo "Found ${highAlerts.size()} high-risk vulnerabilities!"
-                highAlerts.each { alert ->
+            if (urgentAlerts.size() > 0) {
+                echo "Found ${urgentAlerts.size()} high-risk vulnerabilities!"
+                urgentAlerts.each { alert ->
                     echo "High Risk Alert: ${alert.alert} at ${alert.url}"
                 }
                 error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
