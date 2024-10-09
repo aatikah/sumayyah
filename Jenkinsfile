@@ -146,7 +146,7 @@ stage('Build and Push Docker Image') {
                 
                 // Pull the latest image and run the new container
                 sh """
-                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHost} '
+                    ssh -o StrictHostKeyChecking=no ${remoteUser}@${remoteHostInternal} '
                         docker pull ${dockerImage} && 
                         docker run -d --restart unless-stopped -p 8000:8000 --name my-task-app ${dockerImage}
                     '
