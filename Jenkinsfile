@@ -130,7 +130,7 @@ stage('Build and Push Docker Image') {
     steps {
         script {
             def remoteUser = 'jenkins-slave'
-            def dockerImage = '$DOCKER_IMAGE'
+            def dockerImage = '${DOCKER_IMAGE}'
             
             sshagent(['JENKINS_MASTER_KEY_2']) {
                 // Stop and remove the old container if it existS
