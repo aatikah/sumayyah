@@ -105,32 +105,14 @@ stage('Build and Push Docker Image') {
                 }
             }
         }
-      stage('Debug SSH') {
-            steps {
-			
-				script{
-					def remoteUser = 'jenkins-slave'
-					withCredentials([sshUserPrivateKey(credentialsId: 'JENKINS_MASTER_KEY_2', keyFileVariable: 'SSH_KEY')]) {
-						sh """
-							echo "Current user: \$(whoami)"
-							echo "Current directory: \$(pwd)"
-							echo "SSH key file: \$SSH_KEY"
-							echo "SSH key contents:"
-							cat \$SSH_KEY
-							echo "Attempting SSH connection with verbose output:"
-							ssh -v -i \$SSH_KEY ${remoteUser}@${remoteHostInternal} 'echo "SSH connection successful"'
-						"""
-					}
-				}
-            }
-        }
+      
     
 
       stage('Deploy to GCP VM') {
     steps {
         script {
             def remoteUser = 'jenkins-slave'
-            def dockerImage = 'aatikah/task-app'
+	    def dockerImage = ${DOCKER_IMAGE}
             
             sshagent(['JENKINS_MASTER_KEY_2']) {
                 // Stop and remove the old container if it existS
