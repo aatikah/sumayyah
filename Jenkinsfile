@@ -160,12 +160,14 @@ stage('Build and Push Docker Image') {
             // Perform ZAP scan
             sh """
             ${zapHome}/zap.sh -cmd \
-                -quickurl http://${remoteHost} \
+                -Xmx2g \
+		-quickurl http://${remoteHost} \
                 -quickprogress \
                 -quickout ${WORKSPACE}/${reportNameHtml} 
 
              ${zapHome}/zap.sh -cmd \
-                -quickurl http://${remoteHost} \
+               	-Xmx2g \
+		-quickurl http://${remoteHost} \
                 -quickprogress \
                 -quickout ${WORKSPACE}/${reportNameXml}
                 """
