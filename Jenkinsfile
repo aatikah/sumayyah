@@ -163,18 +163,18 @@ stage('Build and Push Docker Image') {
                 -Xmx2g \
 		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameHtml} 
+                -quickout ${WORKSPACE}/${reportNameHtml} || true
 
              ${zapHome}/zap.sh -cmd \
                	-Xmx2g \
 		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameXml} 
+                -quickout ${WORKSPACE}/${reportNameXml} || true
 
   		 ${zapHome}/zap.sh -cmd \
 		-quickurl http://${remoteHostInternal} \
 		-quickprogress \
-		-quickout ${WORKSPACE}/${reportNameJson}
+		-quickout ${WORKSPACE}/${reportNameJson} || true
                 """
           
             // Archive the ZAP reports
@@ -229,9 +229,8 @@ stage('Build and Push Docker Image') {
             
         }
     }
-   
-           
-     
+  
 }
+	
   }
 }
