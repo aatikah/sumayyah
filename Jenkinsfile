@@ -213,8 +213,9 @@ stage('Build and Push Docker Image') {
                 urgentAlerts.each { alert ->
                     echo "High Risk Alert: ${alert.alert} at ${alert.url}"
                 }
-               // error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
-		echo "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details." || true
+                error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
+		// Set a flag indicating failure
+    		currentBuild.result = 'UNSTABLE'
             }
 
 
