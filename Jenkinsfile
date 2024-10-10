@@ -163,15 +163,13 @@ stage('Build and Push Docker Image') {
                 -Xmx2g \
 		-quickurl http://${remoteHost} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameHtml} \
-		-nostart
+                -quickout ${WORKSPACE}/${reportNameHtml} 
 
              ${zapHome}/zap.sh -cmd \
                	-Xmx2g \
 		-quickurl http://${remoteHost} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameXml} \
-		-nostart
+                -quickout ${WORKSPACE}/${reportNameXml} 
                 """
 
 		// ${zapHome}/zap.sh -cmd \
