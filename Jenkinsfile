@@ -181,7 +181,7 @@ stage('Build and Push Docker Image') {
             // Read and parse the HTML report
             def htmlReportContent = readFile(reportNameHtml)
 
-             Example: Check for high alerts in HTML using regex (customize based on your report structure)
+            // Example: Check for high alerts in HTML using regex (customize based on your report structure)
             def highRiskPattern = ~/<span class="risk"><strong>High<\/strong><\/span>.*?<a href="(.*?)">(.*?)<\/a>/
             def highAlerts = []
 
