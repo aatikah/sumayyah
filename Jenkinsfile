@@ -163,18 +163,18 @@ stage('Build and Push Docker Image') {
                 -Xmx2g \
 		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameHtml} || true
+                -quickout ${WORKSPACE}/${reportNameHtml} 
 
              ${zapHome}/zap.sh -cmd \
                	-Xmx2g \
 		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
-                -quickout ${WORKSPACE}/${reportNameXml} || true
+                -quickout ${WORKSPACE}/${reportNameXml} 
 
   		 ${zapHome}/zap.sh -cmd \
 		-quickurl http://${remoteHostInternal} \
 		-quickprogress \
-		-quickout ${WORKSPACE}/${reportNameJson} || true
+		-quickout ${WORKSPACE}/${reportNameJson}
                 """
           
             // Archive the ZAP reports
@@ -213,7 +213,7 @@ stage('Build and Push Docker Image') {
                 urgentAlerts.each { alert ->
                     echo "High Risk Alert: ${alert.alert} at ${alert.url}"
                 }
-                error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details."
+                error "OWASP ZAP scan found high-risk vulnerabilities. Check the ZAP report for details." || true
             }
 
              // Publish HTML report
