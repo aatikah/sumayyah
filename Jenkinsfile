@@ -7,9 +7,9 @@ pipeline {
         DOCKER_IMAGE = 'aatikah/task-app'
         remoteHost = '34.133.55.7'
 	remoteHostInternal = '10.0.1.14'
-        //DEFECTDOJO_API_KEY = credentials('DEFECTDOJO_API_KEY')
-        //DEFECTDOJO_URL = 'http://34.42.127.145:8080'
-       // PRODUCT_NAME = 'django-project'
+        DEFECTDOJO_URL = 'http://34.68.57.164:8080'
+	DEFECTDOJO_URL_INTERNAL = 'http://10.0.1.16:8080'
+        PRODUCT_NAME = 'taskmanager-project'
     }
     
   stages{
@@ -259,6 +259,108 @@ stage('Build and Push Docker Image') {
                 reportName: 'Nikto DAST Report'
             ])
         }
+    }
+}
+
+	  //SETUP DEFECT DAJNGO SERVER, PROJECT AND ENGAGEMENT FIRST
+	  stage('Forward Reports to DefectDojo') {
+    steps {
+        script {
+            // Create a virtual environment and install requests using bash
+            sh '''
+                python3 -m venv venv
+                bash -c "source venv/bin/activate && pip install requests"
+            '''
+            // Use Jenkins credentials binding to securely inject sensitive values
+            withCredentials([string(credentialsId: 'DEFECTDOJO_API_KEY', variable: 'DEFECTDOJO_API_KEY')]) {
+            // Function to upload reports to DefectDojo
+            def uploadToDefectDojo = {
+    def scriptContent = """
+import requests
+import json
+import sys
+import os
+
+def upload_report(report_path, report_type, engagement_id):
+    url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
+    headers = {
+        'Authorization': f'Token {os.getenv("DEFECTDOJO_API_KEY")}',
+        'Accept': 'application/json'
+    }
+    data = {
+        'product_name': '${PRODUCT_NAME}',
+        'engagement': engagement_id,
+        'scan_type': report_type,
+        'active': 'true',
+        'verified': 'true',
+    }
+    
+    print(f"--- Attempting to upload {report_type} report ---")
+    print(f"Report path: {report_path}")
+    print(f"URL: {url}")
+    print(f"Headers: {json.dumps({k: v if k != 'Authorization' else '[REDACTED]' for k, v in headers.items()}, indent=2)}")
+    print(f"Data: {json.dumps(data, indent=2)}")
+    
+    try:
+        if not os.path.exists(report_path):
+            print(f"Error: Report file {report_path} does not exist")
+            return False
+        
+        file_size = os.path.getsize(report_path)
+        print(f"File size: {file_size} bytes")
+        
+        with open(report_path, 'rb') as file:
+            files = {'file': file}
+            response = requests.post(url, headers=headers, data=data, files=files)
+        
+        print(f"Response status code: {response.status_code}")
+        print(f"Response content: {response.text}")
+        
+        if response.status_code == 201:
+            print(f"Successfully uploaded {report_type} report")
+            return True
+        else:
+            print(f"Failed to upload {report_type} report. Status code: {response.status_code}")
+            return False
+    except Exception as e:
+        print(f"Error occurred while uploading {report_type} report: {str(e)}")
+        return False
+
+# Attempt to upload each report
+reports = [
+    ('gitleaks-report.json', 'Gitleaks Scan', '1'),
+    ('report/dependency-check-report.xml', 'Dependency Check Scan', '2'),
+    ('bandit-report.json', 'Bandit Scan', '3'),
+    ('zap-scan-report.xml', 'ZAP Scan', '4'),
+    ('nikto_output.json', 'Nikto Scan', '5')
+   
+]
+
+
+success_count = 0
+for report_path, report_type, engagement_id  in reports:
+    if upload_report(report_path, report_type, engagement_id ):
+        success_count += 1
+    else:
+        print(f"Failed to upload {report_type} report")
+
+print(f"Summary: Successfully uploaded {success_count} out of {len(reports)} reports")
+
+if success_count < len(reports):
+    sys.exit(1)  # Exit with error if not all reports were uploaded
+"""
+    writeFile file: 'upload_to_defectdojo.py', text: scriptContent
+    // Run the Python script in the virtual environment using bash
+    return sh(script: 'bash -c "source venv/bin/activate && python3 upload_to_defectdojo.py"', returnStatus: true)
+}
+            def uploadStatus = uploadToDefectDojo()
+            
+            if (uploadStatus != 0) {
+                unstable('Some reports failed to upload to DefectDojo')
+            }
+        
+            }   
+            }
     }
 }
 	
