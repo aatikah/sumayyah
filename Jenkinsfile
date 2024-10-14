@@ -282,7 +282,7 @@ import sys
 import os
 
 def upload_report(report_path, report_type, engagement_id):
-    url = "${DEFECTDOJO_URL}/api/v2/import-scan/"
+    url = "${DEFECTDOJO_URL_INTERNAL}/api/v2/import-scan/"
     headers = {
         'Authorization': f'Token {os.getenv("DEFECTDOJO_API_KEY")}',
         'Accept': 'application/json'
