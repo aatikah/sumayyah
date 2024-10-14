@@ -5,7 +5,7 @@ pipeline {
  environment{
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
         DOCKER_IMAGE = 'aatikah/task-app'
-        remoteHost = '34.133.55.7:80'
+        remoteHost = '34.133.55.7'
 	remoteHostInternal = '10.0.1.14'
         DEFECTDOJO_URL = 'http://34.68.57.164:8080'
 	DEFECTDOJO_URL_INTERNAL = 'http://10.0.1.16:8080'
@@ -163,18 +163,18 @@ stage('Build and Push Docker Image') {
             sh """
             ${zapHome}/zap.sh -cmd \
                 -Xmx2g \
-		-quickurl http://${remoteHost} \
+		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
                 -quickout ${WORKSPACE}/${reportNameHtml} 
 
              ${zapHome}/zap.sh -cmd \
                	-Xmx2g \
-		-quickurl http://${remoteHost} \
+		-quickurl http://${remoteHostInternal} \
                 -quickprogress \
                 -quickout ${WORKSPACE}/${reportNameXml} 
 
   		 ${zapHome}/zap.sh -cmd \
-		-quickurl http://${remoteHost} \
+		-quickurl http://${remoteHostInternal} \
 		-quickprogress \
 		-quickout ${WORKSPACE}/${reportNameJson}
                 """
@@ -245,8 +245,8 @@ stage('Build and Push Docker Image') {
             //def TARGET_URL = 'http://34.134.182.0'
             // Run Nikto scan
             sh """
-                /home/jenkins/nikto/program/nikto.pl -h http://${remoteHost} -output nikto_output.json -Format json
-                /home/jenkins/nikto/program/nikto.pl -h http://${remoteHost} -output nikto_output.html -Format html
+                /home/jenkins/nikto/program/nikto.pl -h http://${remoteHostInternal} -output nikto_output.json -Format json
+                /home/jenkins/nikto/program/nikto.pl -h http://${remoteHostInternal} -output nikto_output.html -Format html
             """
             
             // Archive the results
