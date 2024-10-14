@@ -5,7 +5,7 @@ pipeline {
  environment{
         DOCKER_REGISTRY = 'https://index.docker.io/v1/'
         DOCKER_IMAGE = 'aatikah/task-app'
-        remoteHost = '34.133.55.7'
+        remoteHost = '34.133.55.7:80'
 	remoteHostInternal = '10.0.1.14'
         DEFECTDOJO_URL = 'http://34.68.57.164:8080'
 	DEFECTDOJO_URL_INTERNAL = 'http://10.0.1.16:8080'
