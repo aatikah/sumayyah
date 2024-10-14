@@ -153,7 +153,7 @@ stage('Build and Push Docker Image') {
 	  //ZAP STAGE
 	
   
-}
+
 	    stage('DAST with Nikto') {
     steps {
         script {
